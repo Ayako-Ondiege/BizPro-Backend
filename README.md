@@ -1,32 +1,114 @@
 # BizPro Backend
 
-## 🚀 Getting Started
+Flask-based REST API backend for **BizPro** – a role-based construction management platform supporting Admins, Customers, Storekeepers, and Suppliers.
 
-### 1. Create a virtual environment
+This backend includes:
+- 🔐 JWT Authentication
+- 🧱 Modular architecture (Blueprints, Models, Schemas)
+- 🧪 Admin seeding and role-based route protection
+- 🔄 Flask-Migrate for schema versioning
+- 🌱 Environment configuration with `.env` and `.env.example`
+
+---
+
+## 🚀 Tech Stack
+
+- **Python 3.12**
+- **Flask**
+- **SQLAlchemy + PostgreSQL / SQLite**
+- **Flask-Migrate**
+- **Flask-JWT-Extended**
+- **Marshmallow**
+- **Flask-CORS**
+- **dotenv**
+
+---
+
+## 📁 Folder Structure
+
+backend/
+├── app/
+│ ├── init.py
+│ ├── extensions.py
+│ ├── models/
+│ │ └── user.py
+│ ├── routes/
+│ │ ├── auth_routes.py
+│ │ └── main_routes.py
+│ ├── schemas/
+│ │ └── user_schema.py
+│ ├── controllers/ # (for future logic)
+│ └── utils/
+│ └── security.py
+├── migrations/
+├── seed.py # Seeds default admin user
+├── config.py
+├── app.py
+├── .env.example
+├── requirements.txt
+└── README.md
+
+yaml
+Copy
+Edit
+
+---
+
+## ⚙️ Setup Instructions
+
+1. **Clone the repo**  
 ```bash
+git clone https://github.com/your-username/BizPro-Backend.git
+cd BizPro-Backend
+Create virtual environment and activate
+
+bash
+Copy
+Edit
 python3 -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-```
+source venv/bin/activate
+Install dependencies
 
-### 2. Install dependencies
-```bash
+bash
+Copy
+Edit
 pip install -r requirements.txt
-```
+Create .env file
 
-### 3. Initialize and migrate database
-```bash
-flask db init
-flask db migrate -m "Initial migration"
+bash
+Copy
+Edit
+cp .env.example .env
+Update values in .env for your environment.
+
+🛠️ Migrate & Seed Database
+bash
+Copy
+Edit
 flask db upgrade
-```
+python seed.py
+🏁 Run the App
+bash
+Copy
+Edit
+flask run
+Base URL: http://localhost:5000
 
-### 4. Run the server
-```bash
-python app.py
-```
+🔐 Auth Routes
+Method	Endpoint	Description
+POST	/auth/register	Register a new user
+POST	/auth/login	Login and receive a token
+GET	/auth/me	Get current user info
+GET	/admin-only	Protected: Admins only
 
-### 🔐 Notes
-- Base URL: `http://127.0.0.1:5000/`
-- Use Postman to test: `/auth/register`, `/auth/login`, etc.
-- Roles: `admin`, `customer`, `storekeeper`, `supplier`
-- Returns JWT token and user details on login.
+Use JWT in headers: Authorization: Bearer <token>
+
+🧪 Default Admin Credentials
+json
+Copy
+Edit
+{
+  "username": "admin",
+  "email": "admin@bizpro.com",
+  "password": "admin123"
+}
