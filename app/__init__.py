@@ -1,8 +1,8 @@
+# app/__init__.py
+
 from flask import Flask
 from app.extensions import db, jwt, migrate
-from app.routes.auth_routes import auth_bp
-from app.routes.main_routes import bp as routes_bp
-from app import models  # Ensure models are registered for migrations
+from app import models  # Ensure models are imported for migrations
 
 def create_app():
     app = Flask(__name__)
@@ -13,11 +13,11 @@ def create_app():
     jwt.init_app(app)
     migrate.init_app(app, db)
 
-    # Register blueprints
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(routes_bp)
+    # Import and register routes after initializing extensions
+    from app.routes import api_bp
+    app.register_blueprint(api_bp)
 
     return app
 
-# ✅ Make create_app accessible for seed.py and CLI
+# Make factory accessible to CLI and seed scripts
 create_app = create_app
