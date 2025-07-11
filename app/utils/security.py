@@ -2,7 +2,6 @@
 
 from flask_jwt_extended import get_jwt_identity
 from functools import wraps
-from flask import jsonify
 from app.models import User
 
 def role_required(allowed_roles):
@@ -13,6 +12,7 @@ def role_required(allowed_roles):
             user = User.query.get(user_id)
             if user and user.role in allowed_roles:
                 return fn(*args, **kwargs)
-            return jsonify({"error": "Unauthorized"}), 403
+            # ✅ Return a plain dictionary and status code
+            return {"error": "Unauthorized"}, 403
         return wrapper
     return decorator

@@ -1,3 +1,5 @@
+# app/routes/main_routes.py
+
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
 from app.utils.security import role_required
@@ -13,3 +15,4 @@ def index():
 @role_required(["admin"])
 def admin_only():
     return jsonify({"message": "Welcome, Admin!"})
+

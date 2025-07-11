@@ -1,12 +1,12 @@
+# app/models/supplier.py
+
 from app.extensions import db
-from datetime import datetime
 
 class Supplier(db.Model):
+    __tablename__ = "suppliers"
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    contact = db.Column(db.String(100))
-    email = db.Column(db.String(120), unique=True)
-    address = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    phone = db.Column(db.String(20), nullable=True)
 
-    purchases = db.relationship("PurchaseOrder", backref="supplier", lazy=True)
