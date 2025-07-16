@@ -1,0 +1,4 @@
+ id | name | sku | price | stock | category | min_order_quantity | description 
+----+------+-----+-------+-------+----------+--------------------+-------------
+(0 rows)
+

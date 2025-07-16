@@ -53,13 +53,19 @@ def register():
     if User.query.filter_by(email=data["email"]).first():
         return jsonify({"error": "Email already exists"}), 400
 
-    new_user = User(
-        username=data["username"],
-        email=data["email"],
-        role=data["role"]
-    )
-    new_user.set_password(data["password"])
-    db.session.add(new_user)
-    db.session.commit()
+    try:
+        new_user = User(
+            username=data["username"],
+            email=data["email"],
+            role=data["role"]
+        )
+        new_user.set_password(data["password"])
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"message": "User registered successfully"}), 201
 
-    return jsonify({"message": "User registered successfully"}), 201
+    except Exception as e:
+        db.session.rollback()
+        print("❌ Error in /register:", str(e))  # for server-side debugging
+        return jsonify({"error": "Internal Server Error"}), 500
+

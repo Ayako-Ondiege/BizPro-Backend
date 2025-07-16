@@ -1,5 +1,3 @@
-# app/routes/supplier_routes.py
-
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required
@@ -37,6 +35,7 @@ class SupplierListResource(Resource):
         }, 201
 
     @jwt_required()
+    @role_required(["admin", "storekeeper"])
     def get(self):
         suppliers = Supplier.query.all()
         return [
@@ -47,3 +46,49 @@ class SupplierListResource(Resource):
                 "phone": s.phone
             } for s in suppliers
         ], 200
+
+class SupplierResource(Resource):
+    @jwt_required()
+    @role_required(["admin", "storekeeper"])
+    def get(self, id):
+        supplier = Supplier.query.get(id)
+        if not supplier:
+            return {"error": "Supplier not found"}, 404
+        return {
+            "id": supplier.id,
+            "name": supplier.name,
+            "email": supplier.email,
+            "phone": supplier.phone
+        }, 200
+
+    @jwt_required()
+    @role_required(["admin"])  # ⛔ Storekeepers no longer allowed to update
+    def put(self, id):
+        supplier = Supplier.query.get(id)
+        if not supplier:
+            return {"error": "Supplier not found"}, 404
+
+        data = request.get_json()
+        supplier.name = data.get("name", supplier.name)
+        supplier.email = data.get("email", supplier.email)
+        supplier.phone = data.get("phone", supplier.phone)
+        db.session.commit()
+
+        return {"message": "Supplier updated", "supplier": {
+            "id": supplier.id,
+            "name": supplier.name,
+            "email": supplier.email,
+            "phone": supplier.phone
+        }}, 200
+
+    @jwt_required()
+    @role_required(["admin"])
+    def delete(self, id):
+        supplier = Supplier.query.get(id)
+        if not supplier:
+            return {"error": "Supplier not found"}, 404
+
+        db.session.delete(supplier)
+        db.session.commit()
+        return {"message": "Supplier deleted"}, 200
+

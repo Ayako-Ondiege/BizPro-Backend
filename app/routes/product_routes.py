@@ -1,15 +1,21 @@
-# app/routes/product_routes.py (Flask-RESTful)
-
 from flask import request
 from flask_restful import Resource
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models.product import Product
-from flask_jwt_extended import jwt_required
+from app.models.user import User
 
 # Product Routes
 class ProductListResource(Resource):
     @jwt_required()
     def get(self):
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+
+        allowed_roles = ["admin", "storekeeper", "customer"]
+        if not user or user.role.lower() not in allowed_roles:
+            return {"error": "Unauthorized access"}, 403
+
         products = Product.query.all()
         return [
             {
@@ -67,4 +73,3 @@ class ProductResource(Resource):
         db.session.delete(product)
         db.session.commit()
         return {"message": "Product deleted"}, 200
-
