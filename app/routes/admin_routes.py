@@ -57,7 +57,7 @@ class AdminCreateUserResource(Resource):
 class PromoteUserResource(Resource):
     @jwt_required()
     @role_required(["admin"])
-    def patch(self, user_id):  # ✅ Method must be PATCH to match request
+    def patch(self, user_id):
         data = request.get_json()
         new_role = data.get("role")
         if not new_role:
@@ -85,10 +85,28 @@ class DeleteUserResource(Resource):
         db.session.commit()
         return {"message": "User deleted"}, 200
 
+
+class AdminCustomerView(Resource):
+    @jwt_required()
+    @role_required(["admin"])
+    def get(self):
+        customers = User.query.filter_by(role="customer").all()
+        return [
+            {
+                "id": c.id,
+                "username": c.username,
+                "email": c.email,
+                "role": c.role
+            }
+            for c in customers
+        ], 200
+
 # ===========================
 # ✅ Register resources
 # ===========================
 api.add_resource(UserListResource, "/users")
 api.add_resource(AdminCreateUserResource, "/create-user")
-api.add_resource(PromoteUserResource, "/users/<int:user_id>/promote")  # ✅ FIXED
-api.add_resource(DeleteUserResource, "/delete/<int:user_id>")
+api.add_resource(PromoteUserResource, "/users/<int:user_id>/promote")
+api.add_resource(DeleteUserResource, "/users/<int:user_id>")  # ✅ UPDATED
+api.add_resource(AdminCustomerView, "/customers")
+

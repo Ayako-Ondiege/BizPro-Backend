@@ -1,7 +1,8 @@
 from flask import Flask
 from app.extensions import db, jwt, migrate
 from app.routes.api import register_api_routes
-from app.routes.auth_routes import auth_bp   # ✅ Add this line
+from app.routes.auth_routes import auth_bp
+from app.routes.admin_routes import admin_bp   # ✅ Add this line
 from app import models
 
 def create_app():
@@ -12,8 +13,9 @@ def create_app():
     jwt.init_app(app)
     migrate.init_app(app, db)
 
-    register_api_routes(app)          # RESTful routes
-    app.register_blueprint(auth_bp)   # ✅ Register auth routes (login/register)
+    register_api_routes(app)            # RESTful routes like /suppliers
+    app.register_blueprint(auth_bp)     # ✅ Auth routes
+    app.register_blueprint(admin_bp)    # ✅ Admin routes like /admin/users/<id>/promote
 
     return app
 
